@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    .container {
+      background-color: white;
+      padding: 2rem 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h1 {
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    input {
+      padding: 0.7rem;
+      width: 80%;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      transition: all 0.3s ease-in-out;
+      outline: none;
+      margin-bottom: 1rem;
+    }
+
+    input:focus {
+      border-color: #4a90e2;
+      box-shadow: 0 0 8px rgba(74, 144, 226, 0.5);
+    }
+
+    button {
+      padding: 0.7rem 1.2rem;
+      background-color: #4a90e2;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #357abd;
+      transform: scale(1.05);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.3rem;
+      color: #444;
+      min-height: 40px;
+      transition: all 0.4s ease;
+    }
+
+    .fade {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌦 Weather App</h1>
+    <input type="text" id="locationInput" placeholder="Enter city or location" />
+    <br />
+    <button onclick="getWeather()">Get Temperature</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const location = document.getElementById('locationInput').value.trim();
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = "";
+      resultDiv.classList.remove("fade", "error");
+
+      if (!location) {
+        resultDiv.innerHTML = "Please enter a location.";
+        resultDiv.classList.add("error", "fade");
+        return;
+      }
+
+      const apiKey = 'c30bcf199fde477cb39172746251106';
+      const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(location)}&aqi=yes`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Location not found");
+
+        const data = await response.json();
+        const tempC = data.current.temp_c;
+        const condition = data.current.condition.text;
+        const icon = data.current.condition.icon;
+
+        resultDiv.innerHTML = `
+          <div class="fade">
+            <img src="https:${icon}" alt="${condition}" style="vertical-align: middle; width: 50px;" />
+            <strong>${location}</strong><br />
+            ${tempC}°C - ${condition}
+          </div>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `❌ Error: ${error.message}`;
+        resultDiv.classList.add("error", "fade");
+      }
+    }
+  </script>
+</body>
+</html>
