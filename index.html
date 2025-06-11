@@ -124,6 +124,19 @@
         if (!response.ok) throw new Error("Location not found");
 
         const data = await response.json();
+
+        const resultName = data.location.name.toLowerCase();
+        const inputName = location.toLowerCase();
+
+        const validMatch =
+          resultName.includes(inputName) ||
+          inputName.includes(resultName) ||
+          data.location.country.toLowerCase().includes(inputName);
+
+        if (!validMatch) {
+          throw new Error("That doesn't look like a valid city or region.");
+        }
+
         const tempC = data.current.temp_c;
         const condition = data.current.condition.text;
         const icon = data.current.condition.icon;
@@ -131,15 +144,20 @@
         resultDiv.innerHTML = `
           <div class="fade">
             <img src="https:${icon}" alt="${condition}" style="vertical-align: middle; width: 50px;" />
-            <strong>${location}</strong><br />
+            <strong>${data.location.name}</strong><br />
             ${tempC}°C - ${condition}
           </div>
         `;
       } catch (error) {
-        resultDiv.innerHTML = `❌ Error: ${error.message}`;
+        let message = error.message.includes("Location")
+          ? "❌ Couldn't find that location. Please check your spelling."
+          : "❌ " + error.message;
+
+        resultDiv.innerHTML = message;
         resultDiv.classList.add("error", "fade");
       }
     }
   </script>
 </body>
 </html>
+
