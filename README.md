@@ -1,7 +1,7 @@
 # ⛅ Weather App  
 
 A simple and interactive **Weather Application** that fetches real-time weather data for any city using a Weather API.  
-This project demonstrates the use of **APIs**, **JSON parsing**, and a clean user interface for displaying weather information.  
+This project demonstrates the use of **APIs**, **JSON parsing**, and a clean UI for displaying weather information.  
 
 ---
 
